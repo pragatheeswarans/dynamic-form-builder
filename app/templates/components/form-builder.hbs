@@ -1,0 +1,29 @@
+<div class="container-fluid app-base">
+  <div class="row">
+    <div class=" {{if isHorizontalBar 'col-sm-offset-2 col-sm-8' 'col-sm-1'}}">
+      <div class="form-builder col-sm-12 {{builderToolClass}}">
+        <div class="text-box draggable element-item {{if isHorizontalBar 'col-sm-1'}}">
+          {{inline-svg "text-box" class="icon-sm"}}
+        </div>
+        <div class="radio-group draggable element-item {{if isHorizontalBar 'col-sm-1'}}">
+          {{inline-svg "radio-group" class="icon-sm"}}
+        </div>
+        <div class="check-box draggable element-item {{if isHorizontalBar 'col-sm-1'}}">
+          {{inline-svg "checkbox" class="icon-sm"}}
+        </div>
+        <div class="date draggable element-item {{if isHorizontalBar 'col-sm-1'}}">
+          {{inline-svg "date" class="icon-sm"}}
+        </div>
+      </div>
+    </div>
+    <div class="{{if isHorizontalBar 'col-sm-offset-2' 'col-sm-offset-1'}} col-sm-8">
+      <div class="row form-base droppable">
+        <ul class="col-sm-12 dragSortable">
+          {{#each draggedContent as |content|}}
+            {{form-elements content=content}}
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

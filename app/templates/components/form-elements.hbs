@@ -1,0 +1,29 @@
+{{#if (eq content.type 'text_box')}}
+  <div class="col-sm-3 label-container">
+    {{input type="text" value=content.label class="editable-label"}}
+  </div>
+  {{input type="text" class="col-sm-6 input-text"}}
+{{/if}}
+
+{{#if (eq content.type 'radio_button')}}
+  <div class="col-sm-6">
+    {{#each content.groupOptions as |groupLabel|}}
+      <div class="col-sm-12 radio-group">
+        {{input type="radio" name=content.name selected=groupLabel.selected}} {{input type="text" value=groupLabel.label class="editable-label"}}
+      </div>
+    {{/each}}
+  </div>
+{{/if}}
+
+{{#if (eq content.type 'check_box')}}
+  <div class="col-sm-6">
+    {{input type="checkbox"}} {{input type="text" value=content.label class="editable-label"}}
+  </div>
+{{/if}}
+
+{{#if (eq content.type 'date_picker')}}
+  <div class="col-sm-3 label-container">
+    {{input type="text" value=content.label class="editable-label"}}
+  </div>
+  {{input type="text" class="datepicker col-sm-3"}}
+{{/if}}

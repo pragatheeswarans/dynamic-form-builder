@@ -6,7 +6,21 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
     // Add options here
+    minifyJs: {
+      enabled: true
+    },
+    minifyCss: {
+      enabled: true
+    },
+    svg: {
+      paths: [
+        'app/svgs'
+      ]
+    }
   });
+
+  app.import('vendor/js/jquery-ui.min.js');
+  app.import('vendor/css/jquery-ui.min.css');
 
   // Use `app.import` to add additional libraries to the generated
   // output files.

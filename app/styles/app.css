@@ -1,0 +1,109 @@
+.app-base {
+  margin-left: 40px;
+  margin-right: 40px;
+}
+.form-base {
+  min-height: 550px;
+  width: 100%;
+  margin: 20px;
+  border: 1px solid #d2c2c2;
+  padding: 30px;
+}
+.form-base .form-row {
+  border: 1px solid #e0d3d3;
+  border-radius: 20px;
+  padding: 7px;
+  cursor: move;
+}
+.form-base .form-row:hover {
+  background-color: #f7f5f4;
+}
+.form-base .radio-group {
+  margin: 5px 0;
+  padding-left: 0;
+}
+.form-builder {
+  width: 100%;
+  border: 1px solid #d2c2c2;
+  border-radius: 15px;
+  padding: 10px;
+  background-color: #f7f3f3;
+}
+.vertical-bar {
+  height: 400px;
+  margin-top: 100px;
+}
+.horizontal-bar {
+  margin: 20px;
+  padding: 5px;
+}
+.element-item {
+  margin: 7px;
+  padding: 5px;
+  border: 1px solid #d0d0d0;
+  cursor: move;
+}
+.editable-label {
+  border: 1px dashed #d0d0d0;
+  padding: 4px;
+}
+.icon {
+  height: 20px;
+  width: 20px;
+}
+.icon-sm {
+  height: 30px;
+  width: 30px;
+}
+.type-rep {
+  vertical-align: super;
+  padding: 5px;
+}
+.form-control {
+  border: none;
+}
+.input-text {
+  height: 31px;
+}
+.label-container {
+  margin-right: 25px;
+}
+ul {
+  list-style: none;
+}
+@-webkit-keyframes moveSideBar {
+  0% {
+    left: 0;
+    top: 0;
+  }
+  50% {
+    left: 0;
+    top: 300px;
+  }
+  100% {
+    -webkit-transform: rotate(90deg);
+  }
+}
+
+@keyframes moveSideBar {
+  0% {
+    left: 0;
+    top: 0;
+  }
+  50% {
+    left: 0;
+    top: 500px;
+  }
+  100% {
+    transform: rotate(90deg);
+    top: 500px;
+    left: -500px;
+  }
+}
+
+.animated-class {
+  z-index: 1000;
+  -webkit-animation: moveSideBar 3s;
+  animation: moveSideBar 3s;
+  position: relative;
+}

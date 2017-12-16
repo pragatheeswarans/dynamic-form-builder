@@ -9,6 +9,9 @@ export default Service.extend(Evented, {
     window.insertFormElement = function(params) {
       self.publish('handleInsertElementInForm', ...arguments);
     };
+    window.removeFormElement = function(params) {
+      self.publish('removeFormElement', ...arguments);
+    };
   },
 
   subscribe(options) {

@@ -27,3 +27,10 @@
   </div>
   {{input type="text" class="datepicker col-sm-3"}}
 {{/if}}
+
+{{#if (eq content.type 'text_area')}}
+  <div class="col-sm-3 label-container">
+    {{input type="text" value=content.label class="editable-label"}}
+  </div>
+  {{textarea row="15" class="col-md-6 input-text-area"}}
+{{/if}}

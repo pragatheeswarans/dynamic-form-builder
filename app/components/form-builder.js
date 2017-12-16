@@ -1,11 +1,11 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
-// import { observer } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { run } from '@ember/runloop';
 
 export default Component.extend({
   windowConnector: service(),
+  isTransitionDone: false,
   init() {
     this._super(...arguments);
     let elements = [];
@@ -16,17 +16,17 @@ export default Component.extend({
     this.subscribeForListener();
     run.later(this, function() {
       this.set('formBaseHeight', $('.form-base').height());
-      $('.dragSortable').sortable({
+      $('ul').sortable({
         stop: function(event, ui) {
           let toDrop = ui.item;
+          let oldLeft = ui.originalPosition.left;
+          let newLeft = ui.position.left;
+          let diff = Math.abs(oldLeft - newLeft);
+          if (toDrop.hasClass('sortable-element') && diff > 300) {
+            $(toDrop).remove();
+          }
           if (!toDrop.hasClass('sortable-element')) {
             window.insertFormElement(toDrop);
-          }
-        },
-        out: function(event, ui) {
-          let toDrop = ui.item;
-          if (toDrop.hasClass('sortable-element')) {
-            toDrop.remove();
           }
         }
       });
@@ -36,9 +36,8 @@ export default Component.extend({
         revert: true,
         helper: 'clone',
         revertDuration: 0,
-        connectToSortable: '.dragSortable'
+        connectToSortable: 'ul'
       });
-
     }, 500);
   },
 
@@ -100,11 +99,25 @@ export default Component.extend({
     };
   },
 
+  createTextArea(position) {
+    return {
+      type: 'text_area',
+      label: 'Text Area',
+      value: 'This is a sample value',
+      position
+    };
+  },
+
   subscribeForListener() {
     this.get('windowConnector').subscribe({
       eventName: 'handleInsertElementInForm',
       context: this,
       listener: this.handleInsertElementInForm
+    });
+    this.get('windowConnector').subscribe({
+      eventName: 'removeFormElement',
+      context: this,
+      listener: this.removeFormElement
     });
   },
 
@@ -120,9 +133,18 @@ export default Component.extend({
       newElement = this.createCheckBox(position);
     } else if (toDrop.hasClass('date')) {
       newElement = this.createDatePicker(position);
+    } else if (toDrop.hasClass('text-area')) {
+      newElement = this.createTextArea(position);
     }
     toDrop.remove();
     draggedContent.insertAt(position, newElement);
+    this.set('draggedContent', draggedContent);
+  },
+
+  removeFormElement(toDrop) {
+    let draggedContent = this.get('draggedContent') || [];
+    let position = toDrop.index();
+    draggedContent.removeAt(position);
     this.set('draggedContent', draggedContent);
   },
 
@@ -134,21 +156,13 @@ export default Component.extend({
     }
   }),
 
-  builderToolClass: computed('isHorizontalBar', function() {
-    return (this.get('isHorizontalBar')) ? 'horizontal-bar' : 'vertical-bar';
-  }),
-
-  // openSideBar: observer('builderToolClass', function() {
-  //   if (this.get('builderToolClass') === 'animated-class') {
-  //     run.later(this, function() {
-  //       $('.form-builder').removeClass('animated-class').addClass('vertical-bar');
-  //     }, 3000);
-  //   }
-  // }),
-
-  isHorizontalBar: computed('formBaseHeight', function() {
-    let formHeight = this.get('formBaseHeight');
-    return (!formHeight || formHeight < 550) ? true : false;
+  isHorizontalBar: computed('formBaseHeight', {
+    get() {
+      let formHeight = this.get('formBaseHeight');
+      return (!formHeight || formHeight < 550) ? true : false;
+    }, set(key, value) {
+      return value;
+    }
   }),
 
   elementTypes: computed(function() {

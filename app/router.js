@@ -7,6 +7,9 @@ const Router = EmberRouter.extend({
 });
 
 Router.map(function() {
+  this.route('form-builder');
+  this.route('form-viewer', { path: 'form-viewer/:formId' });
+  this.route('form-list');
 });
 
 export default Router;

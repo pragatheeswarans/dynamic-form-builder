@@ -1,33 +1,50 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
+import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 import { run } from '@ember/runloop';
+import FormCreationMixin from 'dynamic-form-builder/mixins/form-element-creation';
 
-export default Component.extend({
+export default Component.extend(FormCreationMixin, {
   windowConnector: service(),
-  isTransitionDone: false,
+  viewLiveForm: false,
+  formTitle: 'Form Title',
   init() {
     this._super(...arguments);
     let elements = [];
-    elements.pushObject(this.createTextElement(0));
-    elements.pushObject(this.createRadioGroup(1));
-    elements.pushObject(this.createCheckBox(2));
+    let formElements = (window.formBuilder || {}).formObject;
+    if (isEmpty(formElements)) {
+      window.formBuilder = {};
+      elements.pushObject(this.createTextElement(0));
+      elements.pushObject(this.createRadioGroup(1));
+      elements.pushObject(this.createCheckBox(2));
+    } else {
+      elements = formElements;
+    }
     this.set('draggedContent', elements);
     this.subscribeForListener();
-    run.later(this, function() {
+    run.next(this, function() {
       this.set('formBaseHeight', $('.form-base').height());
       $('ul').sortable({
+        start: function(event, ui) {
+          let draggedElement = ui.item;
+          if (draggedElement.hasClass('sortable-element')) {
+            let oldIndex = draggedElement.index();
+            draggedElement.oldPosition = oldIndex;
+          }
+        },
         stop: function(event, ui) {
           let toDrop = ui.item;
+          let oldPosition = toDrop.oldPosition;
+          let newPosition = toDrop.index();
           let oldLeft = ui.originalPosition.left;
           let newLeft = ui.position.left;
           let diff = Math.abs(oldLeft - newLeft);
-          if (toDrop.hasClass('sortable-element') && diff > 300) {
-            $(toDrop).remove();
+          let action = 'insert';
+          if (toDrop.hasClass('sortable-element')) {
+            action = (diff > 300) ? 'remove' : 'sort';
           }
-          if (!toDrop.hasClass('sortable-element')) {
-            window.insertFormElement(toDrop);
-          }
+          window.handleSortingOfElements(action, toDrop, oldPosition, newPosition);
         }
       });
 
@@ -38,7 +55,7 @@ export default Component.extend({
         revertDuration: 0,
         connectToSortable: 'ul'
       });
-    }, 500);
+    });
   },
 
   didRender() {
@@ -48,97 +65,39 @@ export default Component.extend({
     }, 500);
   },
 
-  createTextElement(position) {
-    return {
-      type: 'text_box',
-      label: 'Field Label',
-      value: 'Text Box Value',
-      position
-    };
-  },
-
-  createRadioGroup(position) {
-    return {
-      type: 'radio_button',
-      label: 'Radio Label',
-      value: '',
-      name: `radio-${position}`,
-      position,
-      groupOptions: [
-        {
-          selected: true,
-          label: 'Option - 1'
-        },
-        {
-          selected: false,
-          label: 'Option - 2'
-        },
-        {
-          selected: false,
-          label: 'Option - 3'
-        }
-      ]
-    };
-  },
-
-  createCheckBox(position) {
-    return {
-      type: 'check_box',
-      label: 'Checkbox Label',
-      value: '',
-      position
-    };
-  },
-
-  createDatePicker(position) {
-    return {
-      type: 'date_picker',
-      label: 'Date',
-      value: '',
-      position
-    };
-  },
-
-  createTextArea(position) {
-    return {
-      type: 'text_area',
-      label: 'Text Area',
-      value: 'This is a sample value',
-      position
-    };
-  },
-
   subscribeForListener() {
     this.get('windowConnector').subscribe({
-      eventName: 'handleInsertElementInForm',
+      eventName: 'handleSortingOfElements',
       context: this,
-      listener: this.handleInsertElementInForm
-    });
-    this.get('windowConnector').subscribe({
-      eventName: 'removeFormElement',
-      context: this,
-      listener: this.removeFormElement
+      listener: this.handleSortingOfElements
     });
   },
 
-  handleInsertElementInForm(toDrop) {
-    let draggedContent = this.get('draggedContent') || [];
+  handleSortingOfElements(action, element, oldPos, newPos) {
+    let formElements = this.get('draggedContent') || [];
     let newElement = {};
-    let position = toDrop.index() || 0;
-    if (toDrop.hasClass('text-box')) {
-      newElement = this.createTextElement(position);
-    } else if (toDrop.hasClass('radio-group')) {
-      newElement = this.createRadioGroup(position);
-    } else if (toDrop.hasClass('check-box')) {
-      newElement = this.createCheckBox(position);
-    } else if (toDrop.hasClass('date')) {
-      newElement = this.createDatePicker(position);
-    } else if (toDrop.hasClass('text-area')) {
-      newElement = this.createTextArea(position);
+    if (action === 'remove') {
+      formElements.removeAt(oldPos);
+    } else if (action === 'insert') {
+      if (element.hasClass('text-box')) {
+        newElement = this.createTextElement(newPos);
+      } else if (element.hasClass('radio-group')) {
+        newElement = this.createRadioGroup(newPos);
+      } else if (element.hasClass('check-box')) {
+        newElement = this.createCheckBox(newPos);
+      } else if (element.hasClass('date')) {
+        newElement = this.createDatePicker(newPos);
+      } else if (element.hasClass('text-area')) {
+        newElement = this.createTextArea(newPos);
+      }
+      element.remove();
+      formElements.insertAt(newPos, newElement);
+    } else if (action === 'sort') {
+      element = formElements[oldPos];
+      formElements.removeAt(oldPos);
+      formElements.insertAt(newPos, element);
     }
-    toDrop.remove();
-    draggedContent.insertAt(position, newElement);
-    this.set('draggedContent', draggedContent);
+    this.set('draggedContent', formElements);
   },
 
   removeFormElement(toDrop) {
@@ -165,7 +124,34 @@ export default Component.extend({
     }
   }),
 
-  elementTypes: computed(function() {
-    return [ 'text_box', 'radio_button', 'check_box' ];
-  }),
+  actions: {
+    showLiveForm() {
+      let form = this.get('draggedContent') || {};
+      form.set('title', this.get('formTitle') || 'Untitled Form');
+      this.get('action')(form);
+    },
+    saveForm() {
+      let form = this.get('draggedContent') || {};
+      let url = 'https://guarded-island-78214.herokuapp.com/form/store';
+      let params = {
+        type: 'POST',
+        data: {
+          'JSONString': JSON.stringify(form),
+          'name': (this.get('formTitle') || 'Untitled Form').toString()
+        }
+      };
+      $.ajax(url, params).then((response) => {
+        if (response.code === 0) {
+          this.send('showLiveForm');
+          alert('Form Added succesfully!');
+        }
+      }).catch((errorObj) => {
+        if (errorObj.responseJSON.code === 1062) {
+          alert('Form title already exists. Pls change it and try again.');
+        } else {
+          alert('Unable to submit form!');
+        }
+      });
+    }
+  }
 });

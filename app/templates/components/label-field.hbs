@@ -1,0 +1,17 @@
+{{#if isLiveForm}}
+  {{#if isRadioOrCheckbox}}
+    <label class="control-label"> {{elementObj.label}} </label>
+  {{else}}
+    <div class="col-sm-3">
+      <label class="control-label"> {{elementObj.label}} </label>
+    </div>
+  {{/if}}
+{{else}}
+  {{#if isRadioOrCheckbox}}
+    {{input type="text" value=elementObj.label class="editable-label"}}
+  {{else}}
+    <div class="col-sm-3 label-container">
+      {{input type="text" value=elementObj.label class="editable-label"}}
+    </div>
+  {{/if}}
+{{/if}}

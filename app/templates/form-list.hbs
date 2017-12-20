@@ -1,0 +1,23 @@
+<div class="container" style="text-align: center;">
+  <div class="row">
+    <div class="col-sm-12" style="margin-top:150px">
+      <h3> Welcome to Form Builder </h3>
+    </div>
+    <div class="col-sm-6 col-sm-offset-3">
+      <span class="pull-left"> <h5> Your Forms </h5> </span>
+      <span class="pull-right"> {{#link-to "form-builder"}} New Form {{/link-to}} </span>
+      <table class="table">
+        <tbody>
+          {{#each model as |form|}}
+            <tr>
+              <td {{action "openForm" form.id}}> {{form.name}} </td>
+            </tr>
+          {{else}}
+            <p> You haven't created a Form yet. Use the {{#link-to "form-builder"}} Form Builder {{/link-to}} tool to create one </p>
+            {{inline-svg "form" class="icon-xlarge"}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

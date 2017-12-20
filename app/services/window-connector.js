@@ -6,11 +6,8 @@ export default Service.extend(Evented, {
   init() {
     this._super(...arguments);
     let self = this;
-    window.insertFormElement = function(params) {
-      self.publish('handleInsertElementInForm', ...arguments);
-    };
-    window.removeFormElement = function(params) {
-      self.publish('removeFormElement', ...arguments);
+    window.handleSortingOfElements = function(action, element, oldPos, newPos) {
+      self.publish('handleSortingOfElements', ...arguments);
     };
   },
 

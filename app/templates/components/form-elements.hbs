@@ -1,6 +1,6 @@
 {{#if (eq content.type 'text_box')}}
   {{label-field isLiveForm=isLiveForm elementObj=content}}
-  {{input type="text" class="col-sm-6 input-text"}}
+  {{input type="text" class="col-sm-6 input-text" value=content.value}}
 {{/if}}
 
 {{#if (eq content.type 'radio_button')}}
@@ -16,17 +16,17 @@
 
 {{#if (eq content.type 'check_box')}}
   <div class="col-sm-12">
-    {{input type="checkbox"}}
+    {{input type="checkbox" checked=content.value}}
     {{label-field isLiveForm=isLiveForm elementObj=content type="checkbox"}}
   </div>
 {{/if}}
 
 {{#if (eq content.type 'date_picker')}}
   {{label-field isLiveForm=isLiveForm elementObj=content}}
-  {{input type="text" class="datepicker col-sm-3"}}
+  {{input type="text" class="datepicker col-sm-3" value=content.value}}
 {{/if}}
 
 {{#if (eq content.type 'text_area')}}
   {{label-field isLiveForm=isLiveForm elementObj=content}}
-  {{textarea row="15" class="col-md-6 input-text-area"}}
+  {{textarea row="15" class="col-md-6 input-text-area" value=content.value}}
 {{/if}}

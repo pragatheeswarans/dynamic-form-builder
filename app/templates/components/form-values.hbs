@@ -1,0 +1,16 @@
+{{model.name}}
+{{#if model.submittedValue}}
+  <span class="pull-right" {{action "showFormData" bubbles=false}} data-toggle="tooltip" data-placement="right" title="View Submitted Values"> {{inline-svg "form" class="icon"}} </span>
+{{/if}}
+<div class="col-sm-12 {{if showFormValues '' 'hide'}}">
+  <table class="table">
+    <tbody>
+      {{#each formValues as |formData|}}
+        <tr>
+          <td> {{formData.label}} </td>
+          <td> {{formData.value}} </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

@@ -28,8 +28,9 @@
           <div class="col-sm-12" style="padding: 0 35px;">
             {{input type="text" value=formTitle class="col-sm-10 input-text {{if viewLiveForm '' 'editable-label'}}" }}
             <div class="pull-right">
-              <span {{action "showLiveForm"}}> {{inline-svg "preview" class="icon-sm"}} </span>
-              <span {{action "saveForm"}}> {{inline-svg "save" class="icon-sm"}} </span>
+              <span {{action "showLiveForm"}} data-toggle="tooltip" data-placement="left" title="View Form"> {{inline-svg "preview" class="icon-sm cp"}} </span>
+              <span {{action "saveForm"}} data-toggle="tooltip" data-placement="bottom" title="Save Form"> {{inline-svg "save" class="icon-sm cp"}} </span>
+              <span {{action "goBack"}} data-toggle="tooltip" data-placement="bottom" title="Go Back"> {{inline-svg "back" class="icon-sm cp"}} </span>
             </div>
           </div>
         </div>

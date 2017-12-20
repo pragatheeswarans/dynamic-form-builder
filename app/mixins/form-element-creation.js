@@ -36,7 +36,7 @@ export default ({
     return {
       type: 'check_box',
       label: 'Checkbox Label',
-      value: '',
+      value: false,
       position
     };
   },

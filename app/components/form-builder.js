@@ -7,6 +7,7 @@ import FormCreationMixin from 'dynamic-form-builder/mixins/form-element-creation
 
 export default Component.extend(FormCreationMixin, {
   windowConnector: service(),
+  notify: service(),
   viewLiveForm: false,
   formTitle: 'Form Title',
   init() {
@@ -55,6 +56,7 @@ export default Component.extend(FormCreationMixin, {
         revertDuration: 0,
         connectToSortable: 'ul'
       });
+      $('[data-toggle="tooltip"]').tooltip();
     });
   },
 
@@ -130,6 +132,9 @@ export default Component.extend(FormCreationMixin, {
       form.set('title', this.get('formTitle') || 'Untitled Form');
       this.get('action')(form);
     },
+    goBack() {
+      window.history.back();
+    },
     saveForm() {
       let form = this.get('draggedContent') || {};
       let url = 'https://guarded-island-78214.herokuapp.com/form/store';
@@ -143,13 +148,13 @@ export default Component.extend(FormCreationMixin, {
       $.ajax(url, params).then((response) => {
         if (response.code === 0) {
           this.send('showLiveForm');
-          alert('Form Added succesfully!');
+          this.get('notify').success('Form Added succesfully!');
         }
       }).catch((errorObj) => {
         if (errorObj.responseJSON.code === 1062) {
-          alert('Form title already exists. Pls change it and try again.');
+          this.get('notify').error('Form title already exists. Pls change it and try again.');
         } else {
-          alert('Unable to submit form!');
+          this.get('notify').error('Unable to submit form!');
         }
       });
     }

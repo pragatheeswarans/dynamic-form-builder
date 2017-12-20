@@ -16,12 +16,15 @@ export default Route.extend({
   setupController(controller, context) {
     let data = (window.formBuilder || {}).formObject;
     let title = (data || {}).title;
+    let id = 0;
     if (context[0]) {
       data = JSON.parse(context[0].data);
       title = context[0].name;
+      id = context[0].id;
     }
     controller.set('model', data);
     controller.set('model.title', title);
+    controller.set('model.id', id);
   },
 
   actions: {

@@ -20,7 +20,9 @@ module.exports = function(defaults) {
   });
 
   app.import('vendor/js/jquery-ui.min.js');
+  app.import('vendor/js/bootstrap.min.js');
   app.import('vendor/css/jquery-ui.min.css');
+  app.import('vendor/css/bootstrap.min.css');
 
   // Use `app.import` to add additional libraries to the generated
   // output files.

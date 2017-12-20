@@ -4,6 +4,9 @@
       <div class="row" style="margin:20px 10px;">
         <div class="col-sm-12">
           <button class="btn btn-default" type="submit" {{action 'goBack'}}> Go Back </button>
+          {{#if canShowFormSubmit}}
+            <button class="btn btn-default" type="submit" {{action 'submitForm'}}> Submit Form </button>
+          {{/if}}
         </div>
       </div>
       <div class="form-base row">

@@ -11,11 +11,5 @@ export default Route.extend({
 
   setupController(controller, context) {
     controller.set('model', context);
-  },
-
-  actions: {
-    openForm(formId) {
-      this.transitionTo('form-viewer', formId);
-    }
   }
 });
